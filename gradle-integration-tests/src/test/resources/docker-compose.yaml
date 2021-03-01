@@ -1,0 +1,12 @@
+version: '3'
+services:
+  postgres:
+    image: postgres:12-alpine
+    environment:
+      POSTGRES_USER: thebackendengineer
+      POSTGRES_PASSWORD: 12345
+      POSTGRES_DB: thebackendengineer
+    volumes:
+      - ./init.sql:/docker-entrypoint-initdb.d/01-init.sql
+    ports:
+      - 5432
