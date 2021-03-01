@@ -16,8 +16,7 @@ import io.ktor.routing.route
 import io.ktor.routing.routing
 import io.ktor.serialization.json
 import io.ktor.server.netty.EngineMain
-import io.codeal.repository.CustomerRepository
-import org.jdbi.v3.core.Jdbi
+import kotlinx.serialization.Serializable
 
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
@@ -30,13 +29,10 @@ fun Application.module() {
     }
 }
 
-val customerRepository = CustomerRepository(
-    Jdbi.create(
-        "jdbc:postgresql://localhost:${System.getProperty("postgres.port")}/thebackendengineer", // url
-        "thebackendengineer", // username
-        "12345"
-    )
-)
+@Serializable
+data class Customer(val id: String, val firstName: String, val lastName: String, val email: String)
+
+val customers = mutableListOf<Customer>()
 
 fun Route.customerRouting() {
     route("/customers") {
@@ -45,7 +41,7 @@ fun Route.customerRouting() {
                 "Missing or malformed id",
                 status = HttpStatusCode.BadRequest
             )
-            val customer = customerRepository.findById(id) ?: return@get call.respondText(
+            val customer = customers.firstOrNull { it.id == id } ?: return@get call.respondText(
                 "No customer with id $id",
                 status = HttpStatusCode.NotFound
             )
@@ -54,7 +50,7 @@ fun Route.customerRouting() {
         }
         post {
             val customer = call.receive<Customer>()
-            customerRepository.save(customer)
+            customers.add(customer)
             call.respond(Created)
         }
     }

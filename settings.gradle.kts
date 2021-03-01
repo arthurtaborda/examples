@@ -1,3 +1,4 @@
 rootProject.name = "examples"
 
-includeBuild("gradle-integration-tests")
+includeBuild("ktor")
+includeBuild("docker-compose-with-gradle")

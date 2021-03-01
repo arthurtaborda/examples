@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 class SimpleIntegrationTest {
 
     @Test
-    fun `should save customer in the database`() {
+    fun `should store and get customer`() {
         withTestApplication({ module() }) {
             val customerJson = /*language=JSON*/ """
                 {
