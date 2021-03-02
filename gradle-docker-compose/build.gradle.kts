@@ -15,10 +15,8 @@ repositories {
 
 tasks.test {
     doFirst {
-        val postgresContainer =
-            dockerCompose.servicesInfos["postgres"]?.firstContainer ?: error("couldn't find postgres container")
-        val postgresPort = postgresContainer.ports[5432] ?: error("couldn't find postgres port")
-        systemProperty("postgres.port", postgresPort)
+        dockerCompose.exposeAsEnvironment(this@test)
+        dockerCompose.exposeAsSystemProperties(this@test)
     }
 
     useJUnitPlatform()
@@ -39,12 +37,14 @@ compileTestKotlin.kotlinOptions {
 dockerCompose {
     useComposeFiles.add("src/test/resources/docker-compose.yaml")
     isRequiredBy(tasks.test)
-    isStopContainers = false
 }
 
 dependencies {
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
+
+    implementation("org.slf4j:slf4j-api:1.7.30")
+    implementation("org.slf4j:slf4j-simple:1.7.30")
 
     // database
     implementation(platform("org.jdbi:jdbi3-bom:3.16.0"))

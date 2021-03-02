@@ -6,7 +6,7 @@ data class Customer(val id: String, val firstName: String, val lastName: String,
 
 val customerRepository = CustomerRepository(
     Jdbi.create(
-        "jdbc:postgresql://localhost:${System.getProperty("postgres.port")}/codeal",
+        "jdbc:postgresql://localhost:${System.getProperty("postgres.tcp.5432")}/codeal",
         "codeal",
         "password"
     )
